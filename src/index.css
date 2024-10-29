@@ -1,0 +1,51 @@
+@font-face {
+  font-family: BrotherSignature;
+  src: url(./media/BrotherSignature.otf);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+:root {
+  --background-color: #F3F8FF;
+  --background-color-navbar: #dde2e9;
+  --foreground-color: #003cff;
+  --foreground-color-2: #5900ff;
+  --primary-text-color: #1a1a1a;
+  --secondary-text-color: #f6f6f6;
+  --text-subtle: #686868;
+  --toggle-bg: #f0eb9d;
+  --toggle-fg: #ffd000;
+  --active-link: #0B82E6;
+  --dangerous-color: #B00020;
+  --secondary-text-color-opacity: rgba(246, 246, 246, 0.5);
+  --gold-color: #DAA520;
+  --silver-color: #707070;
+  --bronze-color: #CA7846;
+}
+
+[data-theme="dark"] {
+  --background-color: #1a1a1a;
+  --background-color-navbar: #323232;
+  --foreground-color: #0B82E6;
+  --foreground-color-2: #955dff;
+  --primary-text-color: #f6f6f6;
+  --secondary-text-color: #1a1a1a;
+  --text-subtle: #b3b3b3;
+  --toggle-bg: #283452;
+  --toggle-fg: #0B82E6;
+  --active-link: #0B82E6;
+  --dangerous-color: #CF6679;
+  --secondary-text-color-opacity: rgba(26, 26, 26, 0.5);
+  --gold-color: #FFD700;
+  --silver-color: #C0C0C0;
+  --bronze-color: #CD7F32;
+}
