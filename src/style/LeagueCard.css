@@ -12,9 +12,9 @@
     text-decoration: none;
   }
   .card-link:hover,
-  .card-link:hover .card-item {
-    text-decoration: none;
-    color: #FFF;
+  .card-link:hover span {
+    text-decoration: none !important;
+    color: #FFF !important;
   }
   .card-link:hover .card-sec-bg {
     -webkit-transform: scale(10);
@@ -31,19 +31,20 @@
     position: relative;
   }
   .card-box {
+    display: flex;
     font-size: clamp(3px, 6vw, 18px);
     color: black;
     z-index: 2;
     position: relative;
   }
-  .card-item {
-    font-weight: bold;
-    color: #0B82E6;
-    padding: 0vh 1vw;
+  .card-box span {
+    font-weight: bold !important;
+    color: #0B82E6 !important;
+    padding: 0vh 10px !important;
   
-    -webkit-transition: color .5s ease;
-    -o-transition: color .5s ease;
-    transition: color .5s ease
+    -webkit-transition: color .5s ease !important;
+    -o-transition: color .5s ease !important;
+    transition: color .5s ease !important
   }
   .card-sec-bg {
     height: 128px;

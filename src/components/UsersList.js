@@ -31,7 +31,7 @@ export const UsersList = ({ users, setUsers, setAdminUsers, adminUsers }) => {
                         return (
                             <div className="user-box" key={user._id}>
                                 {/* הצגת checkbox רק אם adminUsers קיים והוא לא ריק */}
-                                {adminUsers && (
+                                {adminUsers && user.email && (
                                     <div className="checkbox-wrapper-13">
                                         <input
                                             className="admin-status"

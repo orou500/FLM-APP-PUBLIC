@@ -114,10 +114,10 @@ const OddKnockoutBracket = ({ users, KnockoutType, tournamentData, setTournament
 
   return (
     <div className="tournament-container">
-      <h2>הוספת משחק לטורניר</h2>
+      <h2 className='add-games-tournament'>הוספת משחק לטורניר</h2>
       {stageIndex === 0 ? (
         <>
-          <label>בחר קבוצה 1:</label>
+          <label className='select-teams-tournament'>בחר קבוצה 1:</label>
           <select value={team1} onChange={(e) => setTeam1(e.target.value)}>
             <option value="">בחר קבוצה 1</option>
             {users.filter(user => `${user.firstName} ${user.lastName}` !== team2).map((user, index) => (
@@ -138,7 +138,7 @@ const OddKnockoutBracket = ({ users, KnockoutType, tournamentData, setTournament
         </>
       ) : (
         <>
-          <label>בחר קבוצה 1:</label>
+          <label className='select-teams-tournament'>בחר קבוצה 1:</label>
           <select value={selectedTeam1} onChange={(e) => setSelectedTeam1(e.target.value)}>
             <option value="">בחר קבוצה 1</option>
             {tournamentData[knockoutIndex + stageIndex - 1].length > 0 && 
@@ -162,7 +162,7 @@ const OddKnockoutBracket = ({ users, KnockoutType, tournamentData, setTournament
           </select>
         </>
       )}
-      <label>תוצאה קבוצה 1:</label>
+      <label className='result-game-team-1'>תוצאה קבוצה 1:</label>
       <input
         type="number"
         value={score1}
@@ -177,7 +177,7 @@ const OddKnockoutBracket = ({ users, KnockoutType, tournamentData, setTournament
         placeholder="תוצאה קבוצה 2"
       />
       <label>בחר שלב:</label>
-      <select value={stageIndex} onChange={(e) => setStageIndex(Number(e.target.value))}>
+      <select value={stageIndex} onChange={(e) => setStageIndex(Number(e.target.value))} className='select-tournament-level'>
         {availableStages.map((stage, index) => (
           <option key={index} value={index}>{stage}</option>
         ))}

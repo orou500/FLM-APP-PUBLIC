@@ -49,3 +49,42 @@
   --silver-color: #C0C0C0;
   --bronze-color: #CD7F32;
 }
+
+#enable-toolbar-trigger {
+  right: auto !important;
+  top: -7vh !important;
+}
+
+.enable-toolbar-notice-top {
+  top: -7vh !important;
+  right: -5px !important;
+  left: auto !important;
+}
+
+.enable-toolbar-RTL #enable-toolbar-content{
+  direction: ltr !important;
+}
+
+#enable-toolbar-trigger svg {
+  width: 35px !important;
+  height: 35px !important;
+}
+
+#enable-toolbar-trigger svg .enable-trigger-circle{
+  fill: var(--active-link) !important;
+  color: var(--active-link);
+}
+
+.driver-popover {
+  direction: rtl;
+  text-align: right;
+}
+
+.driver-popover-progress-text {
+  direction: ltr;
+  text-align: left;
+}
+
+.text-red {
+  color: var(--dangerous-color);
+}

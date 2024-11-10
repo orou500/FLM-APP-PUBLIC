@@ -1,5 +1,5 @@
 import axios from "axios";
-import { apiUrl } from "../context/contentOption"
+import { apiUrl } from "../data/contentOption"
 
 const BASE_URL = apiUrl.API_BASE_URL_DEV;
 

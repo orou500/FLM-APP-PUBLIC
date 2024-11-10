@@ -23,6 +23,7 @@ const EditProfilePage = () => {
         dateOfBirth: auth.dateOfBirth ? new Date(auth.dateOfBirth).toISOString().split('T')[0] : '',
         gender: auth.gender || '',
         age: '', // נחשב את הגיל כאן
+        profileImage: auth.profileImage || '', // שדה חדש לתמונת פרופיל
     });
 
     // State to handle form submission and error
@@ -39,6 +40,16 @@ const EditProfilePage = () => {
         }
         return age;
     };
+
+    // Validate image URL
+    const isValidImageUrl = (url) => {
+        const urlPattern = /^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,6}(\/[^\s]*)?$/i;
+        const imagePattern = /\.(jpeg|jpg|gif|png|bmp|webp)$/i;
+    
+        return urlPattern.test(url) && imagePattern.test(url);
+    };
+    
+    
 
     // Handle input changes
     const handleInputChange = (e) => {
@@ -57,6 +68,19 @@ const EditProfilePage = () => {
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (formData.firstName.length < 2 || formData.firstName.length > 10 || 
+            formData.lastName.length < 2 || formData.lastName.length > 10) {
+            setError('שם פרטי ושם משפחה חייבים להיות בין 2 ל-10 תווים.');
+            return;
+        }
+
+        if (!isValidImageUrl(formData.profileImage)) {
+            addToast({ id: Date.now(), message: 'כתובת ה-URL של התמונה אינה חוקית', type: 'error' });
+            setError('יש להזין כתובת URL חוקית לתמונת פרופיל');
+            return;
+        }
+
         try {
             const token = localStorage.getItem('token');
             const response = await axios.put(`/users/${auth.id}/edit`, formData, {
@@ -89,6 +113,18 @@ const EditProfilePage = () => {
                     <h2>ערוך פרופיל</h2>
                     <form onSubmit={handleSubmit} className="edit-profile-form">
                         {error && <p className="error-message">{error}</p>}
+                        <div className="form-group">
+                            <label htmlFor="profileImage">תמונת פרופיל:</label>
+                            <input 
+                                type="url" 
+                                id="profileImage" 
+                                name="profileImage" 
+                                value={formData.profileImage} 
+                                onChange={handleInputChange} 
+                                placeholder="הכנס URL של תמונת הפרופיל"
+                                required
+                            />
+                        </div>
                         <div className="form-group">
                             <label htmlFor="firstName">שם פרטי:</label>
                             <input 

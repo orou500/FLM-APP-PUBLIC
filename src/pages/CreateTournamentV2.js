@@ -12,6 +12,8 @@ import axios from '../api/axios';
 import confetti from 'canvas-confetti';
 import { useToast } from '../context/ToastContext';
 import OddKnockoutBracket from '../components/OddKnockoutBracket';
+import { driver } from "driver.js";
+import "driver.js/dist/driver.css";
 
 const CreateTournamentV2 = () => {
     const preference = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -35,7 +37,95 @@ const CreateTournamentV2 = () => {
     const [tournamentType, setTournamentType] = useState('חצי גמר');
     const [dummyPlayers, setDummyPlayers] = useState([]);
     const [tournamentData, setTournamentData] = useState([[], [], [], []]);
-    const [images, setImages] = useState(['']); // מערך לאחסון ה-URLs של התמונות
+    const [images, setImages] = useState([]); // מערך לאחסון ה-URLs של התמונות
+
+    const startGuide = () => {
+        const steps = [
+          {
+            popover: {
+              title: 'דף יצירת טורניר',
+              description: 'דף זה נועד לעזור לכם ליצירת טורניר חדש.',
+              side: "top", align: 'center',
+            },
+          },
+          {
+            element: '.select-tournament-type',
+            popover: {
+              title: 'סוג טורניר',
+              description: 'בבחירה הזאת ניתן לבחור 3 סוגים של טורנרים כאלה שמתחילים משמינית גמר, רבע גמר או חצי גמר.',
+              side: "bottom", align: 'center',
+            },
+          },
+          {
+            element: '.btn-add-image',
+            popover: {
+              title: 'הוספת תמונה',
+              description: 'בלחיצה על כפתור הוספת תמונה תוכל להוסיף תמונה או מספר תמונות באמצעות קישור אינטרנטי לאותה תמונה (הוספת תמונה אינה חובה).',
+              side: "top", align: 'center',
+            },
+          },
+          {
+            element: '.search-bar-container',
+            popover: {
+              title: 'הוספת משתמשים',
+              description: 'בשורה זאת ניתן להוסיף משתמשים לטורניר שים לב שאתה חייב להוסיף לפחות משתמש אחד לטורניר.',
+              side: "top", align: 'center',
+            },
+          },
+          {
+            element: '.the-first-place',
+            popover: {
+              title: 'מקום ראשון',
+              description: 'מקום ראשון הוא המשתמש שזכה בטורניר ושניצח את כולם. שים לב ששדה זה מתמלא אוטמטית לאחר בחירת המשחקים גם את מקום שני ומלך השערים. רק מלך הבישולים צרך למלא ידנית אך לא חובה.',
+              side: "top", align: 'center',
+            },
+          },
+          {
+              element: '.add-games-tournament',
+              popover: {
+                  title: 'הוספת משחק לטורניר',
+                  description: `בהוספת משחק לטורניר צריך לבחור את כל המשחקים שהתרחשו בטורניר עצמו שים לב:\n <p class='text-red'>בחצי גמר</p> חובה להוסיף בדיוק 2 משחקים.\n<p class='text-red'>ברבע גמר</p> חובה להוסיף בדיוק 4 משחקים.\n <p class='text-red'>ובשמינית גמר</p> חובה להוסיף בדיוק 8 משחקים.`,
+                  side: "top", align: 'center',
+                },
+            },
+            {
+              element: '.select-teams-tournament',
+              popover: {
+                title: 'בחירת קבוצות',
+                description: 'בבחירת הקבוצות צריך לבחור שני משתמשים שהתחרו אחת נגד השניה שים לב שלאחר בחירת משתמשים אלו לא יהיה נתן לבחור בהם שוב באותו השלב.',
+                side: "top", align: 'center',
+              },
+            },
+            {
+              element: '.result-game-team-1',
+              popover: {
+                title: 'בחירת תוצאת משחק',
+                description: 'בבחירת תוצאות משחק אתה צריך למלא את מספר הגולים באותו משחק שים לב שכאשר אתה ממלא את מספר הגולים לקבוצה בחרת בשדה הנכון ובקובצה הנכונה.',
+                side: "top", align: 'center',
+              },
+            },
+            {
+              element: '.select-tournament-level',
+              popover: {
+                title: 'בחירת שלב משחק',
+                description: 'בבחירת שלב משחק שים לב שאתה מוסיף את המשחק לשלב הנכון (דוגמה: לאחר שמלאת את שלב חצי גמר במשחקים תצטרך לעבור לשלב גמר).',
+                side: "top", align: 'center',
+              },
+            },
+        ].filter(step => step !== null); // סינון שלבים ריקים או לא רלוונטיים
+      
+        const driverObj = driver({
+          showProgress: true,
+          doneBtnText: 'סיום',
+          closeBtnText: 'סגור',
+          nextBtnText: 'הבא',
+          prevBtnText: 'הקודם',
+          steps: steps
+        });
+        
+        driverObj.drive();
+      };
+
 
         // הוספת שדה URL חדש לתמונות
         const addImageInput = () => {
@@ -49,14 +139,13 @@ const CreateTournamentV2 = () => {
             setImages(newImages);
         };
 
-        const isValidUrl = (url) => {
-            try {
-                new URL(url);
-                return true;
-            } catch (_) {
-                return false;
-            }
+        const isValidImageUrl = (url) => {
+            const urlPattern = /^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,6}(\/[^\s]*)?$/i;
+            const imagePattern = /\.(jpeg|jpg|gif|png|bmp|webp)$/i;
+        
+            return urlPattern.test(url) && imagePattern.test(url);
         };
+
     const checkForDuplicatePlayers = (tournamentData) => {
         const seenPlayers = new Set(); // סט לאחסון שחקנים שנראו כבר
         let hasDuplicates = false;
@@ -260,7 +349,12 @@ const CreateTournamentV2 = () => {
             return;
         }
 
-        const invalidImage = images.some(image => image && !isValidUrl(image));
+        if (title.length < 6 || title.length > 50) {
+            addToast({ id: Date.now(), message: 'הכותרת חייבת להיות בין 6 ל-50 תווים.', type: 'error' });
+            return; // מחזיר את הפונקציה אם הבדיקה לא עברה
+        }
+
+        const invalidImage = images.some(image => image && !isValidImageUrl(image));
         if (invalidImage) {
             addToast({ id: Date.now(), message: 'אחד או יותר מה-URLs של התמונות אינו תקין', type: 'error' });
             setError('אחד או יותר מה-URLs של התמונות אינו תקין');
@@ -277,7 +371,7 @@ const CreateTournamentV2 = () => {
                 secondPlace: secondPlace._id,
                 KOG: KOG._id,
                 playerGoals: allPlayerGoals,
-                images,
+                images: images.filter(Boolean),
                 users,
                 createdAt: tournamentDate,
             }, {
@@ -310,12 +404,15 @@ const CreateTournamentV2 = () => {
             />
             <div className='create-tournament-body'>
                 <div className="create-tournament-container">
+                    <button className="button-modern" onClick={startGuide}>
+                        מדריך אישי
+                    </button>
                     <h2>צור טורניר חדש</h2>
                     {error && <p className="error-message">{error}</p>}
                     <form onSubmit={handleSubmit}>
                         <label>סוג טורניר:</label>
                         <select
-                            className='input-create-tournament'
+                            className='input-create-tournament select-tournament-type'
                             value={tournamentType}
                             onChange={(e) => setTournamentType(e.target.value)}
                         >
@@ -341,7 +438,7 @@ const CreateTournamentV2 = () => {
                             onChange={(e) => setTournamentDate(e.target.value)}
                         />
                         <label>תמונות הטורניר:</label>
-                        {images.map((image, index) => (
+                        {images.length > 0 && images.map((image, index) => (
                             <input
                                 key={index}
                                 type="text"
@@ -369,11 +466,11 @@ const CreateTournamentV2 = () => {
 
                         <label>מקום ראשון:</label>
                         {firstPlace ? (
-                            <p className="tournament-winner">
+                            <p className="tournament-winner the-first-place">
                                 {firstPlace.firstName} {firstPlace.lastName}
                             </p>
                         ) : (
-                            <p className="tournament-winner">טרם נקבע</p>
+                            <p className="tournament-winner the-first-place">טרם נקבע</p>
                         )}
 
                         <label>מקום שני:</label>
@@ -393,7 +490,7 @@ const CreateTournamentV2 = () => {
                             <p className="tournament-runner-up">טרם נקבע</p>
                         )}
 
-                        <button type="submit" className="btn-create-tournament">צור משחק</button>
+                        <button type="submit" className="btn-create-tournament last-btn">צור משחק</button>
                     </form>
                 </div>
                 <div className='tournament-bracket'>

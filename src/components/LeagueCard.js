@@ -5,6 +5,7 @@ import { useAuth } from "../hooks/useAuth";
 import axios from "../api/axios";
 import ConfirmModal from "./ConfirmModal";
 import { useEffect, useState } from "react";
+import { AnimatedCounter } from "react-animated-counter";
 
 export const LeagueCard = ({league, currentLeagues, leagues, setLeagues}) => {
 
@@ -61,15 +62,15 @@ export const LeagueCard = ({league, currentLeagues, leagues, setLeagues}) => {
             {league.title}
           </div>
           <div className="card-box">
-            כמות משחקים: 
+            <p>כמות משחקים:</p> 
             <span className="card-item">
-              {league.tournamentsCount}
+              <AnimatedCounter className="card-item" value={league.tournamentsCount} includeDecimals={false}/>
             </span>
           </div>
           <div className="card-box">
-            כמות שחקנים: 
+            <p>כמות שחקנים:</p> 
             <span className="card-item">
-              {league.usersCount}
+              <AnimatedCounter className="card-item" value={league.usersCount} includeDecimals={false}/>
             </span>
           </div>
           <div className="card-box">

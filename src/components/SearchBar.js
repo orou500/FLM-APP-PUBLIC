@@ -48,11 +48,17 @@ export const SearchBar = ({ setResults, auth, setIsLoading, searchInLeague }) =>
               },
             });
           }
-
+  
           if (response.data) {
-            const results = response.data.filter((user) =>
-              user.email.toLowerCase().includes(debouncedTerm.toLowerCase())
-            );
+            const results = response.data.filter((user) => {
+              // שמות פרטיים ושמות משפחה צריכים להיות באותיות קטנות לחיפוש
+              const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
+              const lowerSearchTerm = debouncedTerm.toLowerCase(); // הוספת המונח לחיפוש באותיות קטנות
+              return (
+                (user.email && user.email.toLowerCase().includes(lowerSearchTerm)) || // חיפוש לפי אימייל
+                fullName.includes(lowerSearchTerm) // חיפוש לפי שם מלא
+              );
+            });
             setResults(results);
           }
         } catch (err) {
@@ -67,9 +73,10 @@ export const SearchBar = ({ setResults, auth, setIsLoading, searchInLeague }) =>
         setIsLoading(false);
       }
     };
-
+  
     handleGetUsers();
-  }, [debouncedTerm, auth.token, addToast, searchInLeague, LeaguesSlug, setResults, setIsLoading]); // התראה ל-debouncedTerm ול-searchInLeague
+  }, [debouncedTerm, auth.token, addToast, searchInLeague, LeaguesSlug, setResults, setIsLoading]);
+  
 
   const handleChange = (value) => {
     setInput(value);

@@ -10,6 +10,7 @@ import { Footer } from '../components/Footer';
 import { useAuth } from '../hooks/useAuth';
 import { LuMedal, LuTrophy } from 'react-icons/lu';
 import { PiSoccerBallDuotone } from 'react-icons/pi';
+import { AnimatedCounter } from 'react-animated-counter';
 
 const UserProfilePage = () => {
   const preference = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -90,9 +91,18 @@ const UserProfilePage = () => {
                 )}
               </div>
               <div className="profile-stats">
-                <LuTrophy className='icon first-place' /><p><strong>מקומות ראשונים:</strong> {user.firstPlaces.length}</p>
-                <LuMedal className='icon second-place'/><p><strong>מקומות שניים:</strong> {user.secondPlaces.length}</p>
-                <PiSoccerBallDuotone className='icon kog'/><p><strong>מלך השערים:</strong> {user.KOG.length}</p>
+                <div className='profile-stats-box'>
+                    <LuTrophy className='icon first-place' /><p><strong>מקומות ראשונים:</strong></p>
+                    <AnimatedCounter value={user.firstPlaces.length} includeDecimals={false}/>
+                </div>
+                <div className='profile-stats-box'>
+                    <LuMedal className='icon second-place'/><p><strong>מקומות שניים:</strong></p>
+                    <AnimatedCounter value={user.secondPlaces.length} includeDecimals={false}/>
+                </div>
+                <div className='profile-stats-box'>
+                  <PiSoccerBallDuotone className='icon kog'/><p><strong>מלך השערים:</strong></p>
+                  <AnimatedCounter className="profile-stats-box-value" value={user.KOG.length} includeDecimals={false}/>
+                </div>
               </div>
           </div>
               ) : (

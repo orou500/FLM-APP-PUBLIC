@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import "../style/Login.css";
 import axios from '../api/axios';
 import { PulseLoader } from "react-spinners";
@@ -7,6 +7,8 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import confetti from 'canvas-confetti';
 import { useToast } from '../context/ToastContext';
 import ConfirmModal from './ConfirmModal';
+import AuthButton from './AuthButton';
+import InfoTooltip from './InfoTooltip';
 
 export const Login = () => {
   const [isChecked, setIsChecked] = useState(true);
@@ -24,6 +26,54 @@ export const Login = () => {
   if (from === '/Login') {
     from = '/';
   }
+
+  useEffect(() => {
+    const checkToken = async () => {
+      const token = localStorage.getItem('token'); // קבלת הטוקן מ-localStorage
+    
+      if (!token) {
+        return;
+      }
+    
+      try {
+        const response = await axios.post('/verify-token', {}, {
+          headers: { 'Authorization': `${token}` }
+        });
+    
+        if (response.data && response.data.user) {
+          if(response.data.user.verify){
+            const token = response.data.token;
+            const admin = response.data.user.admin;
+            const createdLeague = response.data.user.createdLeague;
+            const id = response.data.user._id;
+            const emailRes = response.data.user.email;
+            const firstName = response.data.user.firstName;
+            const lastName = response.data.user.lastName;
+            const profileImage = response.data.user.profileImage;
+            const dateOfBirth = response.data.user.dateOfBirth;
+            const gender = response.data.user.gender;
+            const leaguesId = response.data.user.leaguesId;
+            const tournamentsId = response.data.user.tournamentsId;
+            const firstPlaces = response.data.user.firstPlaces;
+            const secondPlaces = response.data.user.secondPlaces;
+            const KOG = response.data.user.KOG;
+            localStorage.setItem('token', token);
+            setAuth({ id, email: emailRes, admin, createdLeague, firstName, lastName, profileImage, dateOfBirth, gender, leaguesId, tournamentsId, firstPlaces, secondPlaces, KOG})
+            navigate(from, { replace: true })
+        } else {
+          localStorage.removeItem('token'); // Remove token from localStorage
+          setAuth([]); // Clear auth state
+        }
+        } 
+      } catch (error) {
+        localStorage.removeItem('token'); // Remove token from localStorage
+        setAuth([]); // Clear auth state
+        console.error('Token verification failed:', error);
+      }
+    };
+    
+    checkToken();
+  }, [from, navigate, setAuth]);
 
   //handle login
   const [loginValues, setLoginValues] = useState({
@@ -130,7 +180,20 @@ export const Login = () => {
         return; // לא לשלוח בקשה אם תנאי השימוש לא סומנו
     }
 
+    if(registerValues.fullName.split(' ')[0].length <= 2 || registerValues.fullName.split(' ')[1].length <= 2){
+      setErrorValue2(true);
+      addToast({ id: Date.now(), message: 'שם פרטי או שם משפחה חייבים להיות 2 תווים לפחות.', type: 'error' });
+      return; // לא לשלוח בקשה אם הסיסמה קצרה מדי
+    }
+
     if (regEmail.test(registerValues.email) && separateWords(registerValues.fullName)) {
+
+      // הוספת בדיקת אורך הסיסמה
+      if (registerValues.password.length < 6) {
+        setErrorValue2(true);
+        addToast({ id: Date.now(), message: 'הסיסמה חייבת להכיל לפחות 6 תווים.', type: 'error' });
+        return; // לא לשלוח בקשה אם הסיסמה קצרה מדי
+      }
       setErrorValue2(false);
       setIsLoding(true);
       const host = window.location.host;
@@ -204,6 +267,9 @@ export const Login = () => {
 
   return (
     <div className="container-login">
+        <div>
+          <AuthButton setErrorValue1={setErrorValue1} setIsLoding={setIsLoding} setAuth={setAuth} navigate={navigate} from={from} addToast={addToast}/>
+        </div>
       <input
         type="radio" 
         name="tab" 
@@ -264,7 +330,7 @@ export const Login = () => {
         {/* טופס הרשמה */}
         <form className="page signup" onSubmit={handleRegisterSubmitted}>
           <div className="input">
-            <div className="title"><i className="material-icons"></i> שם מלא</div>
+            <div className="title"><InfoTooltip message="שם מלא חייב להיות שם פרטי ושם משפחה בלבד בכל אחד מהם לפחות 2 תווים." /> שם מלא</div>
             <input 
               className="text" 
               type="text" 
@@ -275,7 +341,7 @@ export const Login = () => {
             />
           </div>
           <div className="input">
-            <div className="title"><i className="material-icons"></i> אימייל</div>
+            <div className="title"><InfoTooltip message="אימייל חייב להיות דואר אלקטרוני תקין." /> אימייל</div>
             <input 
               className="text" 
               type="email" 
@@ -286,7 +352,7 @@ export const Login = () => {
             />
           </div>
           <div className="input">
-            <div className="title"><i className="material-icons"></i> סיסמה</div>
+            <div className="title"><InfoTooltip message="סיסמה חייב להיות לפחות 6 תווים." /> סיסמה</div>
             <input 
               className="text" 
               type="password" 

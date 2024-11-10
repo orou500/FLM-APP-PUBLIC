@@ -11,6 +11,8 @@ import { SearchResultsList } from '../components/SearchResultsList';
 import axios from '../api/axios';
 import confetti from 'canvas-confetti';
 import { useToast } from '../context/ToastContext';
+import { driver } from "driver.js";
+import "driver.js/dist/driver.css";
 
 const CreateTournament = () => {
     const preference = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -29,7 +31,54 @@ const CreateTournament = () => {
     const [secondPlace, setSecondPlace] = useState('');
     const [KOG, setKOG] = useState('');
     const [error, setError] = useState('');
-    const [images, setImages] = useState(['']); // מערך לאחסון ה-URLs של התמונות
+    const [images, setImages] = useState([]); // מערך לאחסון ה-URLs של התמונות
+
+    const startGuide = () => {
+        const steps = [
+          {
+            popover: {
+              title: 'דף יצירת טורניר',
+              description: 'דף זה נועד לעזור לכם ליצירת טורניר חדש.',
+              side: "top", align: 'center',
+            },
+          },
+          {
+            element: '.search-bar-container',
+            popover: {
+              title: 'הוספת משתמשים',
+              description: 'בשורה זאת ניתן להוסיף משתמשים לטורניר שים לב שאתה חייב להוסיף לפחות משתמש אחד לטורניר.',
+              side: "bottom", align: 'center',
+            },
+          },
+          {
+            element: '.the-first-place',
+            popover: {
+              title: 'מקום ראשון',
+              description: 'מקום ראשון הוא המשתמש שזכה בטורניר ושניצח את כולם. שים לב שחובה למלא גם את מקום שני מלך השערים ומלך הבישולים.',
+              side: "top", align: 'center',
+            },
+          },
+          {
+            element: '.btn-add-image',
+            popover: {
+              title: 'הוספת תמונה',
+              description: 'בלחיצה על כפתור הוספת תמונה תוכל להוסיף תמונה או מספר תמונות באמצעות קישור אינטרנטי לאותה תמונה (הוספת תמונה אינה חובה).',
+              side: "top", align: 'center',
+            },
+          },
+        ].filter(step => step !== null); // סינון שלבים ריקים או לא רלוונטיים
+      
+        const driverObj = driver({
+          showProgress: true,
+          doneBtnText: 'סיום',
+          closeBtnText: 'סגור',
+          nextBtnText: 'הבא',
+          prevBtnText: 'הקודם',
+          steps: steps
+        });
+        
+        driverObj.drive();
+      };
 
         // הפונקציה מחזירה את התאריך הנוכחי בפורמט YYYY-MM-DD
     const getCurrentDate = () => {
@@ -52,13 +101,11 @@ const CreateTournament = () => {
             setImages(newImages);
         };
 
-        const isValidUrl = (url) => {
-            try {
-                new URL(url);
-                return true;
-            } catch (_) {
-                return false;
-            }
+        const isValidImageUrl = (url) => {
+            const urlPattern = /^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,6}(\/[^\s]*)?$/i;
+            const imagePattern = /\.(jpeg|jpg|gif|png|bmp|webp)$/i;
+        
+            return urlPattern.test(url) && imagePattern.test(url);
         };
         
 
@@ -72,7 +119,12 @@ const CreateTournament = () => {
             return;
         }
 
-        const invalidImage = images.some(image => image && !isValidUrl(image));
+        if (title.length < 6 || title.length > 50) {
+            addToast({ id: Date.now(), message: 'הכותרת חייבת להיות בין 6 ל-50 תווים.', type: 'error' });
+            return; // מחזיר את הפונקציה אם הבדיקה לא עברה
+        }
+
+        const invalidImage = images.some(image => image && !isValidImageUrl(image));
         if (invalidImage) {
             addToast({ id: Date.now(), message: 'אחד או יותר מה-URLs של התמונות אינו תקין', type: 'error' });
             setError('אחד או יותר מה-URLs של התמונות אינו תקין');
@@ -88,7 +140,7 @@ const CreateTournament = () => {
                 secondPlace,
                 KOG,
                 users,
-                images,
+                images: images.filter(Boolean),
                 createdAt: tournamentDate,
             }, {
                 headers: { 
@@ -123,6 +175,9 @@ const CreateTournament = () => {
             />
             <div className='create-tournament-body'>
                 <div className="create-tournament-container">
+                    <button className="button-modern" onClick={startGuide}>
+                        מדריך אישי
+                    </button>
                     <h2>צור טורניר חדש</h2>
                     {error && <p className="error-message">{error}</p>}
                     <form onSubmit={handleSubmit}>
@@ -159,7 +214,7 @@ const CreateTournament = () => {
 
                         <label>מקום ראשון:</label>
                         <select
-                            className='input-create-tournament'
+                            className='input-create-tournament the-first-place'
                             value={firstPlace}
                             onChange={(e) => setFirstPlace(e.target.value)}
                         >
@@ -199,7 +254,7 @@ const CreateTournament = () => {
                             ))}
                         </select>
                         <label>תמונות הטורניר:</label>
-                        {images.map((image, index) => (
+                        {images.length > 0 && images.map((image, index) => (
                             <input
                                 key={index}
                                 type="text"
@@ -212,7 +267,7 @@ const CreateTournament = () => {
                         <button type="button" className="btn-add-image" onClick={addImageInput}>
                             הוסף תמונה
                         </button>
-                        <button type="submit" className="btn-create-tournament">צור משחק</button>
+                        <button type="submit" className="btn-create-tournament last-btn">צור משחק</button>
                     </form>
                 </div>
             </div>

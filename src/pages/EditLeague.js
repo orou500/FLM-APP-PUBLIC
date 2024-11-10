@@ -12,6 +12,7 @@ import axios from '../api/axios';
 import { PulseLoader } from 'react-spinners';
 import confetti from 'canvas-confetti';
 import { useParams } from 'react-router-dom';
+import InfoTooltip from '../components/InfoTooltip';
 
 const EditLeague = () => {
   const { slug } = useParams(); // מקבל את מזהה הליגה מה-URL
@@ -22,6 +23,7 @@ const EditLeague = () => {
   const { addToast } = useToast();
   const [results, setResults] = useState([]);
   const [users, setUsers] = useState([]);
+  const [fakeUsers, setFakeUsers] = useState([]);
   const [adminUsers, setAdminUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoading2, setIsLoading2] = useState(false);
@@ -32,6 +34,7 @@ const EditLeague = () => {
   useEffect(() => {
     const fetchLeagueDetails = async () => {
       setIsLoading(true);
+      
       try {
         const token = localStorage.getItem('token');
         const response = await axios.get(`/leagues/${slug}`, {
@@ -40,10 +43,10 @@ const EditLeague = () => {
             'Authorization': `${token}`,
           }
         });
-
-        const { title, users, adminsId } = response.data.league;
+        const { title, users, adminsId, fakeUsers } = response.data.league;
         setLeagueTitle(title); // ממלא את שם הליגה ב-Input
-        setUsers(users); // ממלא את רשימת המשתמשים
+        setUsers(users); // שומר את השילוב ב-users
+        setFakeUsers(fakeUsers); // שומר את fakeUsers בנפרד
         setAdminUsers(adminsId); // ממלא את רשימת המנהלים
       } catch (err) {
         setError('שגיאה באחזור פרטי הליגה');
@@ -69,20 +72,36 @@ const EditLeague = () => {
   };
 
   const handleSubmit = async (event) => {
-    event.preventDefault(); // למנוע את ברירת המחדל של שליחת הטופס
+    event.preventDefault();
+
+    if (leagueTitle.length < 6 || leagueTitle.length > 50) {
+      addToast({ id: Date.now(), message: 'הכותרת חייבת להיות בין 6 ל-50 תווים.', type: 'error' });
+      return;
+    }
 
     if (adminUsers.length === 0) {
         addToast({ id: Date.now(), message: 'יש לבחור לפחות מנהל אחד', type: 'error' });
-        return; // חזרה מהפונקציה אם אין מנהלים
+        return;
     }
 
     try {
-      setIsLoading2(true); // מפעיל את מצב הטעינה
+      setIsLoading2(true);
       const token = localStorage.getItem('token');
-      const response = await axios.put(`/leagues/${slug}`, { // שליחה ב- PUT לעריכת ליגה
-        title: leagueTitle.toUpperCase(), // שינוי כאן ל-title
-        usersId: users.map(user => user._id), // הנח שאתה צריך רק את ה-ID של המשתמשים
-        adminsId: adminUsers // הנח שאתה צריך רק את ה-ID של המנהלים
+
+      // ניצור מערך של מזהים עבור משתמשים אמיתיים בלבד
+      const realUsersIds = users
+        .filter(user => !fakeUsers.some(fakeUser => fakeUser._id === user._id))
+        .map(user => user._id);
+      
+      // ניצור מערך של מזהים עבור המשתמשים הפיקטיביים שעדיין קיימים ב-fakeUsers
+      const newFakeUsers = fakeUsers
+        .filter(fakeUser => users.some(user => user._id === fakeUser._id)) // רק אלו שלא נמחקו
+
+      const response = await axios.put(`/leagues/${slug}`, {
+        title: leagueTitle.toUpperCase(),
+        usersId: realUsersIds,
+        adminsId: adminUsers,
+        fakeUsers: newFakeUsers
       }, {
         headers: {
           'Content-Type': 'application/json',
@@ -114,6 +133,7 @@ const EditLeague = () => {
     }
   };
 
+
   return (
     <div className='create-league' data-theme={isDark ? "dark" : "light"}>
       <Logo 
@@ -126,19 +146,23 @@ const EditLeague = () => {
           <h1 className='league-title'>עריכת ליגה:</h1>
           <hr className="sep" />
           {error && <p>{error}</p>}
-          <div className="group">
-            <input 
-              type="text" 
-              required="required" 
-              value={leagueTitle} 
-              onChange={(e) => setLeagueTitle(e.target.value)} // מעדכן את שדה הכותרת
-            />
-            <span className="highlight"></span>
-            <span className="bar"></span>
-            <label className='league-label'>כותרת</label>
+          <div className='group-info'>
+            <InfoTooltip message="הכותרת חייבת להיות בין 6 ל-50 תווים." />
+            <div className="group">
+              <input 
+                type="text" 
+                required="required" 
+                value={leagueTitle} 
+                onChange={(e) => setLeagueTitle(e.target.value)} // מעדכן את שדה הכותרת
+              />
+              <span className="highlight"></span>
+              <span className="bar"></span>
+              <label className='league-label'>כותרת</label>
+            </div>
           </div>
           <UsersList users={users} setUsers={setUsers} adminUsers={adminUsers} setAdminUsers={setAdminUsers} />
           <div className="search-bar-container">
+            <InfoTooltip message="חיפוש משתמשים על ידי המייל שלהם. שים לב שחובה להוסיף לפחות משתמש 1." />
             <SearchBar setResults={setResults} auth={auth} setIsLoading={setIsLoading} />
             {isLoading ? (
               <div className="loading">טוען נתונים...</div>

@@ -12,6 +12,7 @@ import axios from '../api/axios';
 import { PulseLoader } from 'react-spinners';
 import confetti from 'canvas-confetti';
 import { useNavigate } from 'react-router-dom';
+import InfoTooltip from '../components/InfoTooltip';
 
 const CreateLeague = () => {
   const preference = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -61,6 +62,11 @@ const CreateLeague = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault(); // למנוע את ברירת המחדל של שליחת הטופס
+
+    if (leagueTitle.length < 6 || leagueTitle.length > 50) {
+      addToast({ id: Date.now(), message: 'הכותרת חייבת להיות בין 6 ל-50 תווים.', type: 'error' });
+      return; // מחזיר את הפונקציה אם הבדיקה לא עברה
+    }
 
     try {
         setIsLoading2(true); // מפעיל את מצב הטעינה
@@ -112,32 +118,39 @@ const CreateLeague = () => {
       />
       <div className='create-league-body'>
         <form className='league-form' onSubmit={handleSubmit}>
-          <h1 className='league-title'>יצירת ליגה חדשה:</h1>
+          <h1 className='league-title'><InfoTooltip message="שים לב ניתן ליצור רק ליגה אחת לכל משתמש." /> יצירת ליגה חדשה:</h1>
           <hr className="sep" />
-          <div className="group">
-            <input 
-              type="text" 
-              required="required" 
-              value={leagueTitle} 
-              onChange={(e) => setLeagueTitle(e.target.value)} // מעדכן את שדה הכותרת
-            />
-            <span className="highlight"></span>
-            <span className="bar"></span>
-            <label className='league-label'>כותרת</label>
+          <div className='group-info'>
+            <InfoTooltip message="הכותרת חייבת להיות בין 6 ל-50 תווים." />
+            <div className="group">
+              <input 
+                type="text" 
+                required="required" 
+                value={leagueTitle} 
+                onChange={(e) => setLeagueTitle(e.target.value)} // מעדכן את שדה הכותרת
+              />
+              <span className="highlight"></span>
+              <span className="bar"></span>
+              <label className='league-label'>כותרת</label>
+            </div>
           </div>
-          <div className="group">
-            <input
-              type="date"
-              max={getCurrentDate()} // קובע את התאריך הנוכחי כמקסימום האפשרי
-              value={leagueDate}
-              onChange={(e) => setLeagueDate(e.target.value)} // מעדכן את התאריך
-            />
-            <span className="highlight"></span>
-            <span className="bar"></span>
-            <label className='league-label'>תאריך יצירת ליגה</label>
+          <div className='group-info'>
+            <InfoTooltip message="התאריך שבו נוצר הליגה או התאריך של הטורניר הראשון." />
+            <div className="group">
+              <input
+                type="date"
+                max={getCurrentDate()} // קובע את התאריך הנוכחי כמקסימום האפשרי
+                value={leagueDate}
+                onChange={(e) => setLeagueDate(e.target.value)} // מעדכן את התאריך
+              />
+              <span className="highlight"></span>
+              <span className="bar"></span>
+              <label className='league-label'>תאריך יצירת ליגה</label>
+            </div>
           </div>
           <UsersList users={users} setUsers={setUsers} adminUsers={adminUsers} setAdminUsers={setAdminUsers}/>
           <div className="search-bar-container">
+            <InfoTooltip message="חיפוש משתמשים על ידי המייל שלהם. שים לב שחובה להוסיף לפחות משתמש 1." />
             <SearchBar setResults={setResults} auth={auth} setIsLoading={setIsLoading} searchInLeague={false}/>
             {isLoading ? (
               <div className="loading">טוען נתונים...</div>

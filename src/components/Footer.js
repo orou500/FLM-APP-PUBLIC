@@ -10,7 +10,10 @@ export const Footer = () => {
 
     <div className="footer-left">
 
-        <div><Link to='/' className="logo-footer"><span className="marker-blue">FLM</span><GiSoccerBall /><span className="marker-pink">APP</span></Link></div>
+        <div>
+          <Link to='/' className="logo-footer"><span className="marker-blue">FLM</span><GiSoccerBall /><span className="marker-pink">APP</span></Link>
+          <Link to='/versions' className="logo-footer"><p>גירסה 1.1</p></Link>
+        </div>
         <div className="icons-social">
             <a className="footer-social" href="https://www.facebook.com/SizOps" target="_blank" rel="noopener noreferrer">
               <FaMeta />
@@ -19,7 +22,6 @@ export const Footer = () => {
               <FaInstagram />
             </a>
         </div>
-
         <p className="footer-company-name"><a className="footer-company-name" href="https://api.whatsapp.com/send?phone=972503253027" target="_blank" rel="noopener noreferrer">SizOps</a> © זכויות יוצרים</p>
     </div>
 

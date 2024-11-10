@@ -116,6 +116,34 @@ p {
   background: linear-gradient(to left, var(--foreground-color), var(--foreground-color-2));
 }
 
+.button-modern {
+  display: inline-block;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+  transition: all 0.3s ease;
+  text-align: center;
+  text-decoration: none;
+}
+
+.button-modern:hover {
+  background-color: #0056b3;
+  box-shadow: 0 6px 14px rgba(0, 123, 255, 0.5);
+}
+
+.button-modern:active {
+  background-color: #00448f;
+  transform: translateY(2px);
+  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+}
+
+
 @media (max-width: 768px) {
   .full-page {
     flex-direction: column; /* עובר לעמודה במסכים קטנים */

@@ -18,6 +18,7 @@
 }
 
 .create-tournament-container {
+    max-width: 350px;
     margin: 0 auto;
     padding: 20px;
     background-color: #f8f9fa;
@@ -48,6 +49,9 @@
     border-radius: 4px;
     border: 1px solid #ccc;
 }
+.create-tournament-container .last-btn {
+    margin-top: 1vh;
+}
 
 .create-tournament-container .btn-create-tournament {
     width: 100%;
@@ -67,3 +71,30 @@
     color: red;
     text-align: center;
 }
+
+.create-tournament-container .button-modern {
+    display: inline-block;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffffff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+    transition: all 0.3s ease;
+    text-align: center;
+    width: 100%;
+  }
+  
+  .button-modern:hover {
+    background-color: #0056b3;
+    box-shadow: 0 6px 14px rgba(0, 123, 255, 0.5);
+  }
+  
+  .button-modern:active {
+    background-color: #00448f;
+    transform: translateY(2px);
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+  }

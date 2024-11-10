@@ -15,6 +15,8 @@ import { useToast } from '../context/ToastContext';
 import TournamentBracket from '../components/TournamentBracket';
 import GoalsTable from '../components/GoalsTable';
 import Slider from "react-slick"; // ייבוא של קרוסלה
+import { driver } from "driver.js";
+import "driver.js/dist/driver.css";
 
 const TournamentDetailsPage = () => {
     const preference = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -25,6 +27,70 @@ const TournamentDetailsPage = () => {
     const [tournament, setTournament] = useState(null);
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(true);
+
+    const startGuide = () => {
+        const steps = [
+            {
+                popover: {
+                    title: 'דף הטורניר',
+                    description: 'בדף הטורניר ניתן לראות את כל המידע על הטורניר.',
+                    side: "top", align: 'center',
+                },
+            },
+            tournament.images && tournament.images.length > 0 ?{
+                element: '.tournament-images',
+                popover: {
+                    title: 'תמונות הטורניר',
+                    description: 'כאן ניתן לראות את תמונות מהטורניר.',
+                    side: "bottom", align: 'center',
+                },
+            } : null,
+            {
+                element: '.details-container',
+                popover: {
+                    title: 'תוצאות הטורניר',
+                    description: 'כאן ניתן לראות את תוצאות הטורניר.',
+                    side: "bottom", align: 'center',
+                },
+            },
+            {
+                element: '.league-users',
+                popover: {
+                    title: 'רשימת משתמשים',
+                    description: 'כאן ניתן לראות את רשימת המשתמשים בטורניר. בלחיצה על אחד המשתמשים תגיע לפרופיל המשתמש.',
+                    side: "top", align: 'center',
+                },
+            },
+            tournament.playerGoals && tournament.playerGoals.length > 0 ? {
+                element: '.tournament-goals',
+                popover: {
+                    title: 'טבלת שערים',
+                    description: 'כאן ניתן לראות את טבלת השערים לכל משתמש בטורניר.',
+                    side: "top", align: 'center',
+                },
+            } : null,
+            tournament.tournamentData && tournament.tournamentData.length > 0 ? {
+                element: '.tournament-bracket',
+                popover: {
+                    title: 'טבלת נוקאאוט',
+                    description: 'כאן ניתן לראות את טבלת הנוקאאוט של הטורניר.',
+                    side: "top", align: 'center',
+                },
+            } : null,
+        ].filter(step => step !== null); // סינון שלבים ריקים או לא רלוונטיים
+    
+        const driverObj = driver({
+            showProgress: true,
+            doneBtnText: 'סיום',
+            closeBtnText: 'סגור',
+            nextBtnText: 'הבא',
+            prevBtnText: 'הקודם',
+            steps: steps
+        });
+        
+        driverObj.drive();
+    };
+    
 
     useEffect(() => {
         const fetchTournament = async () => {
@@ -85,6 +151,9 @@ const TournamentDetailsPage = () => {
                 {tournament ? (
                     <>
                         <div className="tournament-details-container">
+                        <button className="button-modern" onClick={startGuide}>
+                            מדריך אישי
+                        </button>
                             <h2>{tournament.title}</h2>
                             <p>תאריך: {new Date(tournament.createdAt).toLocaleDateString()}</p>
 
@@ -140,17 +209,17 @@ const TournamentDetailsPage = () => {
                             {/* רשימת המשתתפים */}
                             <div className='dif-background'>
                                 <UsersListComponents 
-                                    users={tournament.usersId} 
+                                    users={tournament.users} 
                                     postsPerPageNumber={3} 
-                                    totalUsers={tournament.usersId.length} 
-                                    />
+                                    totalUsers={tournament.users.length} 
+                                />
                             </div>
                                     {
                                         tournament && tournament.playerGoals && tournament.playerGoals.length > 0 ? (
-                                            <>
+                                            <div className='tournament-goals'>
                                                 <h3>טבלת שערים:</h3>
                                                 <GoalsTable playerGoals={tournament.playerGoals} />
-                                            </>
+                                            </div>
                                         ) : (
                                             <p>אין נתונים על שערים של שחקנים.</p>
                                         )

@@ -2,7 +2,7 @@ import {React} from "react";
 import "../style/Contact.css";
 import useWindowDimensions from '../hooks/useWindowDimensions';
 import FootballMan from '../media/football-man.webp'
-import { contactConfig } from '../context/contentOption'
+import { contactConfig } from '../data/contentOption'
 
 export const Contact = ({className}) => {
 

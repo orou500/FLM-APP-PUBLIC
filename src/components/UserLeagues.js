@@ -4,6 +4,7 @@ import { useAuth } from '../hooks/useAuth'; // ודא שהנתיב נכון
 import { LeagueCard } from './LeagueCard';
 import { PulseLoader } from 'react-spinners';
 import Pagination from './Pagination';
+import { Link } from 'react-router-dom';
 
 const UserLeagues = () => {
   const { auth } = useAuth(); // לוקח את פרטי המשתמש
@@ -45,13 +46,15 @@ if(leagues){
 }
 
   if (loading) return <PulseLoader className="contact-loading" color="var(--primary-text-color)" />; // הצגת הודעה בזמן טעינה
-  if (error) return <div>{error}</div>; // הצגת שגיאה אם קיימת
+  if (error) return <Link className="button-modern" to='/createleague'>יצירת ליגה</Link>; // הצגת שגיאה אם קיימת
 
   return (
     <div>
       <h2>הליגות שלי:</h2>
       {leagues.length === 0 ? (
-        <p>לא נמצאו ליגות עבור המשתמש.</p> // הודעה אם אין ליגות
+        <Link className="button-modern" to='/createleague'>
+          יצירת ליגה
+        </Link> // הודעה אם אין ליגות
       ) : (
         <div className='users-leagues-continer'>
           {currentLeagues.map((league, i) => ( // מציג את שתי הליגות הראשונות

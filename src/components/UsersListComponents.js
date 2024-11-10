@@ -17,23 +17,19 @@ const UsersListComponents = ({ users, postsPerPageNumber, totalUsers }) => {
       <h2>משתתפים:</h2>
       <ul className="users-list">
         {currentUsers.map((user) => (
-          user._id !== auth.id ?
-          <Link to={`/users/${user._id}`} key={user._id} className="user-card">
+          <Link 
+            to={user.email ? (user._id === auth.id ? `/profile` : `/users/${user._id}`) : '#'} 
+            key={user._id} 
+            className="user-card"
+            style={{ pointerEvents: user.email ? 'auto' : 'none', opacity: user.email ? 1 : 0.5 }}
+          >
             <div className="user-info">
               <span className="user-name">{`${user.firstName} ${user.lastName}`}</span>
             </div>
             <div className="user-info">
-              <span className="user-email">{user.email}</span>
+              <span className="user-email">{user.email || 'משתמש מדומה'}</span>
             </div>
-          </Link> : 
-          <Link to={`/profile`} key={user._id} className="user-card">
-          <div className="user-info">
-            <span className="user-name">{`${user.firstName} ${user.lastName}`}</span>
-          </div>
-          <div className="user-info">
-            <span className="user-email">{user.email}</span>
-          </div>
-        </Link>
+          </Link>
         ))}
       </ul>
       {totalUsers > postsPerPageNumber && (

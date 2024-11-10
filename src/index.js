@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { disableReactDevTools } from '@fvilers/disable-react-devtools';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
+import collection from 'easter-egg-collection'
 import {
   BrowserRouter,
   Routes,
@@ -31,8 +32,12 @@ const TermsOfService = lazy(() => import('./pages/TermsOfService'));
 const Verify = lazy(() => import('./pages/Verify'));
 const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 const CreateTournamentV2 = lazy(() => import('./pages/CreateTournamentV2'));
+const CreateFakeUserPage = lazy(() => import('./pages/CreateFakeUserPage'));
+const Versions = lazy(() => import('./pages/Versions'));
 
 disableReactDevTools();
+var newcollection = collection;
+newcollection === collection ? newcollection = collection : newcollection = collection;
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -55,6 +60,13 @@ root.render(
                     element={
                           <Suspense fallback={<Loding />}>
                             <CreateTournament />
+                          </Suspense>
+                        } 
+                      />
+                  <Route path='/:LeaguesSlug/createfakeuser' 
+                    element={
+                          <Suspense fallback={<Loding />}>
+                            <CreateFakeUserPage />
                           </Suspense>
                         } 
                       />
@@ -148,6 +160,13 @@ root.render(
                     element={
                       <Suspense fallback={<Loding />}>
                         <TermsOfService />
+                      </Suspense>
+                    } 
+                  />
+                  <Route path='/versions' 
+                    element={
+                      <Suspense fallback={<Loding />}>
+                        <Versions />
                       </Suspense>
                     } 
                   />

@@ -7,6 +7,8 @@ import { Footer } from '../components/Footer';
 import useLocalStorage from 'use-local-storage';
 import { LuMedal, LuTrophy } from 'react-icons/lu';
 import { PiSoccerBallDuotone } from 'react-icons/pi';
+import { AnimatedCounter } from 'react-animated-counter';
+import UserLeagues from '../components/UserLeagues';
 
 const ProfilePage = () => {
     const { auth } = useAuth();
@@ -36,7 +38,7 @@ const ProfilePage = () => {
                 {auth ? (
                     <div className="profile-container">
                         <div className="profile-header">
-                            <img src={auth.avatar || "https://ionicframework.com/docs/img/demos/avatar.svg"} alt="Profile Avatar" className="profile-avatar" />
+                            <img src={auth.profileImage || "https://ionicframework.com/docs/img/demos/avatar.svg"} alt="Profile Avatar" className="profile-avatar" />
                             <h2>{auth.firstName} {auth.lastName}</h2>
                         </div>
                         <div className="profile-info">
@@ -54,9 +56,18 @@ const ProfilePage = () => {
                             )}
                             {/* הוספת מידע על המיקומים */}
                             <div className="profile-stats">
-                                <LuTrophy className='icon first-place' /><p><strong>מקומות ראשונים:</strong> {auth.firstPlaces.length}</p>
-                                <LuMedal className='icon second-place'/><p><strong>מקומות שניים:</strong> {auth.secondPlaces.length}</p>
-                                <PiSoccerBallDuotone className='icon kog'/><p><strong>מלך השערים:</strong> {auth.KOG.length}</p>
+                                <div className='profile-stats-box'>
+                                    <LuTrophy className='icon first-place' /><p><strong>מקומות ראשונים:</strong></p>
+                                    <AnimatedCounter value={auth.firstPlaces.length} includeDecimals={false}/>
+                                </div>
+                                <div className='profile-stats-box'>
+                                    <LuMedal className='icon second-place'/><p><strong>מקומות שניים:</strong></p>
+                                    <AnimatedCounter value={auth.secondPlaces.length} includeDecimals={false}/>
+                                </div>
+                                <div className='profile-stats-box'>
+                                    <PiSoccerBallDuotone className='icon kog'/><p><strong>מלך השערים:</strong></p>
+                                    <AnimatedCounter className="profile-stats-box-value" value={auth.KOG.length} includeDecimals={false}/>
+                                </div>
                             </div>
                         </div>
                         <div className="profile-actions">
@@ -64,6 +75,7 @@ const ProfilePage = () => {
                                 ערוך פרופיל
                             </Link>
                         </div>
+                        <UserLeagues />
                     </div>
                 ) : (
                     <p>משתמש לא נמצא</p>

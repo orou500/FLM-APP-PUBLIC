@@ -41,8 +41,13 @@
   }
   .league-form .group {
     position: relative;
-    margin: 45px 0;
+    margin-bottom: 45px;
   }
+
+  .league-form .group-info{
+    display: flex;
+  }
+
   .league-form .league-textarea {
     resize: none;
   }
