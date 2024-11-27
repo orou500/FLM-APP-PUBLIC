@@ -24,6 +24,7 @@ const CreateFakeUserPage = () => {
       firstPlaces: [],
       secondPlaces: [],
       KOG: [],
+      KOA: [],
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -62,6 +63,7 @@ const CreateFakeUserPage = () => {
               firstPlaces: [],
               secondPlaces: [],
               KOG: [],
+              KOA: [],
           });
       } catch (error) {
           setError(error.response?.data?.message || "הוספת משתמש מדומה נכשלה");

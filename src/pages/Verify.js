@@ -42,9 +42,10 @@ const Verify = () => {
                     const firstPlaces = response.data.user.firstPlaces;
                     const secondPlaces = response.data.user.firstPlaces;
                     const KOG = response.data.user.KOG;
+                    const KOA = response.data.user.KOA;
                     localStorage.setItem('token', token);
                     addToast({ id: Date.now(), message: 'אימות בוצע בהצלחה', type: 'success' });
-                    setAuth({ id, email: emailRes, admin, createdLeague, firstName, lastName, profileImage, dateOfBirth, gender, leaguesId, tournamentsId, firstPlaces, secondPlaces, KOG})
+                    setAuth({ id, email: emailRes, admin, createdLeague, firstName, lastName, profileImage, dateOfBirth, gender, leaguesId, tournamentsId, firstPlaces, secondPlaces, KOG, KOA})
                     navigate('/')
                 }
             } catch (error) {

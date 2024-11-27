@@ -34,8 +34,9 @@ const AuthButton = ({ setAuth, navigate }) => {
         const firstPlaces = res.data.firstPlaces;
         const secondPlaces = res.data.secondPlaces;
         const KOG = res.data.KOG;
+        const KOA = res.data.KOA;
         localStorage.setItem('token', token);
-        setAuth({ id, email: emailRes, admin, createdLeague, firstName, lastName, profileImage, dateOfBirth, gender, leaguesId, tournamentsId, firstPlaces, secondPlaces, KOG})
+        setAuth({ id, email: emailRes, admin, createdLeague, firstName, lastName, profileImage, dateOfBirth, gender, leaguesId, tournamentsId, firstPlaces, secondPlaces, KOG, KOA})
         navigate('/', { replace: true });
       }).catch(error => console.error(error));
     }

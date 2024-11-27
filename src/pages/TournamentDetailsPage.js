@@ -17,6 +17,8 @@ import GoalsTable from '../components/GoalsTable';
 import Slider from "react-slick"; // ייבוא של קרוסלה
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
+import { GiRunningShoe } from 'react-icons/gi';
+import ViewGroupStage from '../components/ViewGroupStage';
 
 const TournamentDetailsPage = () => {
     const preference = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -66,6 +68,22 @@ const TournamentDetailsPage = () => {
                 popover: {
                     title: 'טבלת שערים',
                     description: 'כאן ניתן לראות את טבלת השערים לכל משתמש בטורניר.',
+                    side: "top", align: 'center',
+                },
+            } : null,
+            tournament.playerAssists && tournament.playerAssists.length > 0 ? {
+                element: '.tournament-assists',
+                popover: {
+                    title: 'טבלת בישולים',
+                    description: 'כאן ניתן לראות את טבלת הבישולים לכל משתמש בטורניר.',
+                    side: "top", align: 'center',
+                },
+            } : null,
+            tournament.groupStage && tournament.groupStage.length > 0 ? {
+                element: '.groups-container-wrapper',
+                popover: {
+                    title: 'שלב בתים',
+                    description: 'כאן ניתן לראות את שלב הבתים של הטורניר.',
                     side: "top", align: 'center',
                 },
             } : null,
@@ -160,37 +178,53 @@ const TournamentDetailsPage = () => {
                             {tournament.images && tournament.images.length > 0 && (
                                 <div className='tournament-images'>
                                     <h3>תמונות מהטורניר:</h3>
-                                    <Slider {...sliderSettings}>
-                                        {tournament.images.map((image, index) => (
-                                            <div key={index}>
-                                                <img src={image} alt={`${tournament.title} ${index + 1}`} className='tournament-image' />
+                                    {
+                                        tournament.images.length === 1 ? (
+                                            <div key={tournament.images[0]}>
+                                                <img src={tournament.images[0]} alt={`${tournament.images[0].title}`} className='tournament-image' />
                                             </div>
-                                        ))}
-                                    </Slider>
+                                        ) : (
+                                            <Slider {...sliderSettings}>
+                                            {tournament.images.map((image, index) => (
+                                                <div key={index}>
+                                                    <img src={image} alt={`${tournament.title} ${index + 1}`} className='tournament-image' />
+                                                </div>
+                                            ))}
+                                        </Slider>
+                                        )
+                                    }
                                 </div>
                             )}
                             <div className='details-container'>
                                 {/* בדיקת המשתמש הנוכחי */}
                                 <p><LuTrophy className='icon first-place' /> מקום ראשון <LuTrophy className='icon first-place' /></p>
                                 {auth.id === tournament.firstPlace._id ? (
-                                    <Link to="/profile" key={ tournament.KOG._id + ' firstPlace'}>
+                                    <Link to="/profile" key={ tournament.firstPlace._id + ' firstPlace'}>
+                                        {tournament.firstPlace.firstName} {tournament.firstPlace.lastName}
+                                    </Link>
+                                ) : tournament.firstPlace.email ? (
+                                    <Link to={`/users/${tournament.firstPlace._id}`} key={tournament.firstPlace._id + ' firstPlace'}>
                                         {tournament.firstPlace.firstName} {tournament.firstPlace.lastName}
                                     </Link>
                                 ) : (
-                                    <Link to={`/users/${tournament.firstPlace._id}`} key={ tournament.KOG._id + ' firstPlace'}>
+                                    <p key={tournament.firstPlace.firstName + ' firstPlace'}>
                                         {tournament.firstPlace.firstName} {tournament.firstPlace.lastName}
-                                    </Link>
+                                    </p>
                                 )}
 
                                 <p><LuMedal className='icon second-place'/> מקום שני <LuMedal className='icon second-place'/></p>
                                 {auth.id === tournament.secondPlace._id ? (
-                                    <Link to="/profile" key={ tournament.KOG._id + ' secondPlace'}>
+                                    <Link to="/profile" key={ tournament.secondPlace._id + ' secondPlace'}>
+                                        {tournament.secondPlace.firstName} {tournament.secondPlace.lastName}
+                                    </Link>
+                                ) : tournament.secondPlace.email ? (
+                                    <Link to={`/users/${tournament.secondPlace._id}`} key={tournament.secondPlace._id + ' secondPlace'}>
                                         {tournament.secondPlace.firstName} {tournament.secondPlace.lastName}
                                     </Link>
                                 ) : (
-                                    <Link to={`/users/${tournament.secondPlace._id}`} key={ tournament.KOG._id + ' secondPlace'}>
+                                    <p key={tournament.secondPlace.firstName + ' secondPlace'}>
                                         {tournament.secondPlace.firstName} {tournament.secondPlace.lastName}
-                                    </Link>
+                                    </p>
                                 )}
 
                                 <p><PiSoccerBallDuotone className='icon kog'/> מלך השערים <PiSoccerBallDuotone className='icon kog'/></p>
@@ -198,10 +232,29 @@ const TournamentDetailsPage = () => {
                                     <Link to="/profile"  key={ tournament.KOG._id + ' KOG'}>
                                         {tournament.KOG.firstName} {tournament.KOG.lastName}
                                     </Link>
-                                ) : (
+                                ) : tournament.KOG.email ? (
                                     <Link to={`/users/${tournament.KOG._id}`} key={tournament.KOG._id + ' KOG'}>
                                         {tournament.KOG.firstName} {tournament.KOG.lastName}
                                     </Link>
+                                ) : (
+                                    <p key={tournament.KOG.firstName + ' KOG'}>
+                                        {tournament.KOG.firstName} {tournament.KOG.lastName}
+                                    </p>
+                                )}
+
+                                <p><GiRunningShoe className='icon koa'/> מלך הבישולים <GiRunningShoe className='icon koa'/></p>
+                                {auth.id === tournament.KOA._id ? (
+                                    <Link to="/profile"  key={ tournament.KOA._id + ' KOA'}>
+                                        {tournament.KOA.firstName} {tournament.KOA.lastName}
+                                    </Link>
+                                ) : tournament.KOA.email ? (
+                                    <Link to={`/users/${tournament.KOA._id}`} key={tournament.KOA._id + ' KOA'}>
+                                        {tournament.KOA.firstName} {tournament.KOA.lastName}
+                                    </Link>
+                                ) : (
+                                    <p key={tournament.KOA.firstName + ' KOA'}>
+                                        {tournament.KOA.firstName} {tournament.KOA.lastName}
+                                    </p>
                                 )}
                             </div>
 
@@ -224,7 +277,24 @@ const TournamentDetailsPage = () => {
                                             <p>אין נתונים על שערים של שחקנים.</p>
                                         )
                                     }
+                                    {
+                                        tournament && tournament.playerAssists && tournament.playerAssists.length > 0 ? (
+                                            <div className='tournament-goals tournament-assists'>
+                                                <h3>טבלת בישולים:</h3>
+                                                <GoalsTable playerGoals={tournament.playerAssists} Assists={true} />
+                                            </div>
+                                        ) : (
+                                            <p>אין נתונים על בישולים של שחקנים.</p>
+                                        )
+                                    }
                         </div>
+                        {
+                            tournament && tournament.groupStage && tournament.groupStage.length > 0 ? (
+                                <ViewGroupStage groups={tournament.groupStage} />
+                            ) : (
+                                <></>
+                            )
+                        }
                         {
                             tournament && tournament.tournamentData && tournament.tournamentData.length > 0 ? (
                                 <div className='tournament-container'>

@@ -9,6 +9,7 @@ import { LuMedal, LuTrophy } from 'react-icons/lu';
 import { PiSoccerBallDuotone } from 'react-icons/pi';
 import { AnimatedCounter } from 'react-animated-counter';
 import UserLeagues from '../components/UserLeagues';
+import { GiRunningShoe } from 'react-icons/gi';
 
 const ProfilePage = () => {
     const { auth } = useAuth();
@@ -67,6 +68,10 @@ const ProfilePage = () => {
                                 <div className='profile-stats-box'>
                                     <PiSoccerBallDuotone className='icon kog'/><p><strong>מלך השערים:</strong></p>
                                     <AnimatedCounter className="profile-stats-box-value" value={auth.KOG.length} includeDecimals={false}/>
+                                </div>
+                                <div className='profile-stats-box'>
+                                    <GiRunningShoe className='icon koa'/><p><strong>מלך השערים:</strong></p>
+                                    <AnimatedCounter className="profile-stats-box-value" value={auth.KOA.length} includeDecimals={false}/>
                                 </div>
                             </div>
                         </div>

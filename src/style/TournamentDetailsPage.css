@@ -64,6 +64,9 @@
 .tournament-details-container .kog {
     color: #CD7F32;
 }
+.tournament-details-container .koa {
+    color: #b87333;
+}
 
 .tournament-details-container a {
     text-decoration: none;

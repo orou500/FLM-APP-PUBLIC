@@ -84,6 +84,9 @@
 .profile-stats .kog {
     color: var(--bronze-color);
 }
+.profile-stats .koa {
+    color: var(--copper-color);
+}
 
 .profile-stats p {
     font-size: 1.1rem; /* גודל טקסט מעט גדול יותר */

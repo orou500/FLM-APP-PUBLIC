@@ -3,7 +3,7 @@ import React from 'react';
 import '../style/GoalsTable.css';
 
 
-const GoalsTable = ({ playerGoals }) => {
+const GoalsTable = ({ playerGoals, Assists }) => {
     const sortedPlayerGoals = [...playerGoals].sort((a, b) => b.goals - a.goals);
 
   return (
@@ -12,14 +12,18 @@ const GoalsTable = ({ playerGoals }) => {
             <thead>
                 <tr>
                     <th>שחקן</th>
-                    <th>שערים</th>
+                    {
+                        Assists ? (<th>בישולים</th>) : (<th>שערים</th>)
+                    }
                 </tr>
             </thead>
             <tbody>
                 {sortedPlayerGoals.map((player, index) => (
                     <tr key={index}>
                         <td>{player.name}</td>
-                        <td>{player.goals}</td>
+                        {
+                            Assists ? (<td>{player.assists}</td>) : (<td>{player.goals}</td>)
+                        }
                     </tr>
                 ))}
             </tbody>

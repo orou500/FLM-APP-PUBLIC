@@ -11,6 +11,7 @@ import { useAuth } from '../hooks/useAuth';
 import { LuMedal, LuTrophy } from 'react-icons/lu';
 import { PiSoccerBallDuotone } from 'react-icons/pi';
 import { AnimatedCounter } from 'react-animated-counter';
+import { GiRunningShoe } from 'react-icons/gi';
 
 const UserProfilePage = () => {
   const preference = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -102,6 +103,10 @@ const UserProfilePage = () => {
                 <div className='profile-stats-box'>
                   <PiSoccerBallDuotone className='icon kog'/><p><strong>מלך השערים:</strong></p>
                   <AnimatedCounter className="profile-stats-box-value" value={user.KOG.length} includeDecimals={false}/>
+                </div>
+                <div className='profile-stats-box'>
+                  <GiRunningShoe className='icon koa'/><p><strong>מלך הבישולים:</strong></p>
+                  <AnimatedCounter className="profile-stats-box-value" value={user.KOA.length} includeDecimals={false}/>
                 </div>
               </div>
           </div>

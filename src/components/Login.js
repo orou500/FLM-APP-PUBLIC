@@ -57,8 +57,9 @@ export const Login = () => {
             const firstPlaces = response.data.user.firstPlaces;
             const secondPlaces = response.data.user.secondPlaces;
             const KOG = response.data.user.KOG;
+            const KOA = response.data.user.KOA;
             localStorage.setItem('token', token);
-            setAuth({ id, email: emailRes, admin, createdLeague, firstName, lastName, profileImage, dateOfBirth, gender, leaguesId, tournamentsId, firstPlaces, secondPlaces, KOG})
+            setAuth({ id, email: emailRes, admin, createdLeague, firstName, lastName, profileImage, dateOfBirth, gender, leaguesId, tournamentsId, firstPlaces, secondPlaces, KOG, KOA})
             navigate(from, { replace: true })
         } else {
           localStorage.removeItem('token'); // Remove token from localStorage
@@ -126,8 +127,9 @@ export const Login = () => {
                 const firstPlaces = res.data.user.firstPlaces;
                 const secondPlaces = res.data.user.secondPlaces;
                 const KOG = res.data.user.KOG;
+                const KOA = res.data.user.KOA;
                 localStorage.setItem('token', token);
-                setAuth({ id, email: emailRes, admin, createdLeague, firstName, lastName, profileImage, dateOfBirth, gender, leaguesId, tournamentsId, firstPlaces, secondPlaces, KOG})
+                setAuth({ id, email: emailRes, admin, createdLeague, firstName, lastName, profileImage, dateOfBirth, gender, leaguesId, tournamentsId, firstPlaces, secondPlaces, KOG, KOA})
                 navigate(from, { replace: true })
             }
           }

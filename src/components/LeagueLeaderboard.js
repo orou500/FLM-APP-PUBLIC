@@ -9,8 +9,8 @@ const Leaderboard = ({ users, postsPerPageNumber, totalUsers }) => {
 
   // חישוב נקודות עבור שחקן
   const calculatePoints = (player) => {
-    const { firstPlaces, secondPlaces, KOG } = player;
-    return (firstPlaces.length * 3) + (secondPlaces.length * 2) + (KOG.length * 1);
+    const { firstPlaces, secondPlaces, KOG, KOA } = player;
+    return (firstPlaces.length * 4) + (secondPlaces.length * 3) + (KOG.length * 2) + (KOA.length * 1);
   };
 
   // סידור השחקנים לפי הנקודות
@@ -44,6 +44,7 @@ const Leaderboard = ({ users, postsPerPageNumber, totalUsers }) => {
                 <th>מקומות ראשונים</th>
                 <th>מקומות שניים</th>
                 <th>מלך השערים</th>
+                <th>מלך הבישולים</th>
                 <th>נקודות</th>
               </tr>
             </thead>
@@ -55,6 +56,7 @@ const Leaderboard = ({ users, postsPerPageNumber, totalUsers }) => {
                   <td>{player.firstPlaces.length}</td>
                   <td>{player.secondPlaces.length}</td>
                   <td>{player.KOG.length}</td>
+                  <td>{player.KOA.length}</td>
                   <td>{player.points}</td>
                 </tr>
               ))}

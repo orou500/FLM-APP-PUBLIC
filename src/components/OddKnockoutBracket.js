@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import '../style/OddKnockoutBracket.css';
 import { useToast } from '../context/ToastContext';
 import TournamentBracket from './TournamentBracket'; // ייבוא הקומפוננטה
+//import NewTournamentBracket from './NewTournamentBracket';
 
 const MAX_MATCHES = {
   "שמינית גמר": 8,
@@ -183,7 +184,7 @@ const OddKnockoutBracket = ({ users, KnockoutType, tournamentData, setTournament
         ))}
       </select>
 
-      <button onClick={handleAddMatch}>הוסף משחק</button>
+      <button className='add-match' onClick={handleAddMatch}>הוסף משחק</button>
 
       <h3>נתוני טורניר:</h3>
       {/* כאן אנחנו מוסיפים את הקומפוננטה TournamentBracket */}
@@ -193,6 +194,12 @@ const OddKnockoutBracket = ({ users, KnockoutType, tournamentData, setTournament
         knockoutIndex={knockoutIndex} 
         handleDeleteMatch={handleDeleteMatch} 
       />
+      {/*<NewTournamentBracket 
+        availableStages={availableStages} 
+        tournamentData={tournamentData} 
+        knockoutIndex={knockoutIndex} 
+        handleDeleteMatch={handleDeleteMatch} 
+      />*/}
     </div>
   );
 };

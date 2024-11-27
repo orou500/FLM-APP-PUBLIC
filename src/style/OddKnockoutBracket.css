@@ -28,7 +28,7 @@
   max-height: 30px;
 }
 
-.tournament-container button {
+.tournament-container .add-match {
   background-color: var(--foreground-color);
   color: #fff;
   border: none;
@@ -41,7 +41,7 @@
   max-width: 200px; /* מקסימום רוחב עבור הכפתור */
 }
 
-.tournament-container button:hover {
+.tournament-container .add-match:hover {
   background-color: var(--foreground-color-2);
 }
 
@@ -98,6 +98,7 @@ input[readonly] {
   color: var(--primary-text-color);
   text-align: center;
   font-weight: bold;
+  width: 80px;
 }
 
 .vs {
@@ -140,7 +141,7 @@ input[readonly] {
 
   .tournament-container input,
   .tournament-container select,
-  .tournament-container button {
+  .tournament-container .add-match {
     max-width: 100%; /* מבטיח שהאלמנטים יתאימו למסכים קטנים */
   }
 }

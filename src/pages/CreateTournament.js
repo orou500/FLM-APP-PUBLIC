@@ -30,6 +30,9 @@ const CreateTournament = () => {
     const [firstPlace, setFirstPlace] = useState('');
     const [secondPlace, setSecondPlace] = useState('');
     const [KOG, setKOG] = useState('');
+    const [numGoals, setNumGoals] = useState(0);
+    const [KOA, setKOA] = useState('');
+    const [numAssists, setNumAssists] = useState(0);
     const [error, setError] = useState('');
     const [images, setImages] = useState([]); // מערך לאחסון ה-URLs של התמונות
 
@@ -113,7 +116,7 @@ const CreateTournament = () => {
         e.preventDefault();
         setIsLoading(true);
 
-        if (!title || !firstPlace || !secondPlace || !KOG || !tournamentDate) {
+        if (!title || !firstPlace || !secondPlace || !KOG || !KOA || !tournamentDate) {
             setError('יש למלא את כל השדות');
             setIsLoading(false);
             return;
@@ -132,6 +135,19 @@ const CreateTournament = () => {
             return;
         }
 
+        const kogPlayer = users.find(user => user._id === KOG);
+        const koaPlayer = users.find(user => user._id === KOA);
+    
+        let playerGoals = [];
+        let playerAssists = [];
+    
+        if (kogPlayer && numGoals) {
+            playerGoals = [{ name: `${kogPlayer.firstName} ${kogPlayer.lastName}`, goals: numGoals }];
+        }
+    
+        if (koaPlayer && numAssists) {
+            playerAssists = [{ name: `${koaPlayer.firstName} ${koaPlayer.lastName}`, assists: numAssists }];
+        }
         try {
             const token = localStorage.getItem('token');
             const response = await axios.post(`/leagues/${LeaguesSlug}`, {
@@ -139,7 +155,10 @@ const CreateTournament = () => {
                 firstPlace,
                 secondPlace,
                 KOG,
+                KOA,
                 users,
+                playerGoals,
+                playerAssists,
                 images: images.filter(Boolean),
                 createdAt: tournamentDate,
             }, {
@@ -188,6 +207,7 @@ const CreateTournament = () => {
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             placeholder="כותרת הטורניר"
+                            required
                         />
 
                         <label>תאריך המשחק:</label>
@@ -197,6 +217,7 @@ const CreateTournament = () => {
                             max={getCurrentDate()} 
                             value={tournamentDate}
                             onChange={(e) => setTournamentDate(e.target.value)}
+                            required
                         />
 
                         <label>מי השתתף בטורניר:</label>
@@ -253,6 +274,55 @@ const CreateTournament = () => {
                                 </option>
                             ))}
                         </select>
+                        {
+                            KOG ? (
+                                <>
+                                    <label>כמות שערים:</label>
+                                    <input
+                                        className='input-create-tournament'
+                                        type="number"
+                                        value={numGoals}
+                                        onChange={(e) => setNumGoals(e.target.value)}
+                                        placeholder="כמות שערים"
+                                        required
+                                    />
+                                </>
+                            ) : (
+                                <>
+                                </>
+                            )
+                        }
+                        <label>מלך הבישולים:</label>
+                        <select
+                            className='input-create-tournament'
+                            value={KOA}
+                            onChange={(e) => setKOA(e.target.value)}
+                            >
+                            <option value="">בחר מלך בישולים</option>
+                            {users.map((user) => (
+                                <option key={user._id} value={user._id}>
+                                    {user.firstName} {user.lastName} - {user.email}
+                                </option>
+                            ))}
+                        </select>
+                            {
+                                KOA ? (
+                                    <>
+                                        <label>כמות בישולים:</label>
+                                        <input
+                                            className='input-create-tournament'
+                                            type="number"
+                                            value={numAssists}
+                                            onChange={(e) => setNumAssists(e.target.value)}
+                                            placeholder="כמות בישולים"
+                                            required
+                                        />
+                                    </>
+                                ) : (
+                                    <>
+                                    </>
+                                )
+                            }
                         <label>תמונות הטורניר:</label>
                         {images.length > 0 && images.map((image, index) => (
                             <input

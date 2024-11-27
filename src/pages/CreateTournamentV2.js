@@ -14,6 +14,7 @@ import { useToast } from '../context/ToastContext';
 import OddKnockoutBracket from '../components/OddKnockoutBracket';
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
+import GroupStage from '../components/GroupStage';
 
 const CreateTournamentV2 = () => {
     const preference = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -31,6 +32,9 @@ const CreateTournamentV2 = () => {
     const [firstPlace, setFirstPlace] = useState('');
     const [secondPlace, setSecondPlace] = useState('');
     const [KOG, setKOG] = useState('');
+    const [editKOG, setEditKOG] = useState(false);
+    const [KOA, setKOA] = useState('');
+    const [numAssists, setNumAssists] = useState(0);
     const [allPlayerGoals, setAllPlayerGoals] = useState();
     const [KOGMaxGoals, setKOGMaxGoals] = useState('');
     const [error, setError] = useState('');
@@ -38,80 +42,108 @@ const CreateTournamentV2 = () => {
     const [dummyPlayers, setDummyPlayers] = useState([]);
     const [tournamentData, setTournamentData] = useState([[], [], [], []]);
     const [images, setImages] = useState([]); // מערך לאחסון ה-URLs של התמונות
-
+    const [isGroupStage, setIsGroupStage] = useState(false);
+    const [numberOfGroups, setNumberOfGroups] = useState(null);
+    const [groups, setGroups] = useState([]);
+    const [groupWinners, setGroupWinners] = useState([]);
+    
     const startGuide = () => {
         const steps = [
-          {
-            popover: {
-              title: 'דף יצירת טורניר',
-              description: 'דף זה נועד לעזור לכם ליצירת טורניר חדש.',
-              side: "top", align: 'center',
-            },
-          },
-          {
-            element: '.select-tournament-type',
-            popover: {
-              title: 'סוג טורניר',
-              description: 'בבחירה הזאת ניתן לבחור 3 סוגים של טורנרים כאלה שמתחילים משמינית גמר, רבע גמר או חצי גמר.',
-              side: "bottom", align: 'center',
-            },
-          },
-          {
-            element: '.btn-add-image',
-            popover: {
-              title: 'הוספת תמונה',
-              description: 'בלחיצה על כפתור הוספת תמונה תוכל להוסיף תמונה או מספר תמונות באמצעות קישור אינטרנטי לאותה תמונה (הוספת תמונה אינה חובה).',
-              side: "top", align: 'center',
-            },
-          },
-          {
-            element: '.search-bar-container',
-            popover: {
-              title: 'הוספת משתמשים',
-              description: 'בשורה זאת ניתן להוסיף משתמשים לטורניר שים לב שאתה חייב להוסיף לפחות משתמש אחד לטורניר.',
-              side: "top", align: 'center',
-            },
-          },
-          {
-            element: '.the-first-place',
-            popover: {
-              title: 'מקום ראשון',
-              description: 'מקום ראשון הוא המשתמש שזכה בטורניר ושניצח את כולם. שים לב ששדה זה מתמלא אוטמטית לאחר בחירת המשחקים גם את מקום שני ומלך השערים. רק מלך הבישולים צרך למלא ידנית אך לא חובה.',
-              side: "top", align: 'center',
-            },
-          },
-          {
-              element: '.add-games-tournament',
-              popover: {
-                  title: 'הוספת משחק לטורניר',
-                  description: `בהוספת משחק לטורניר צריך לבחור את כל המשחקים שהתרחשו בטורניר עצמו שים לב:\n <p class='text-red'>בחצי גמר</p> חובה להוסיף בדיוק 2 משחקים.\n<p class='text-red'>ברבע גמר</p> חובה להוסיף בדיוק 4 משחקים.\n <p class='text-red'>ובשמינית גמר</p> חובה להוסיף בדיוק 8 משחקים.`,
-                  side: "top", align: 'center',
+            {
+                popover: {
+                    title: 'דף יצירת טורניר',
+                    description: 'דף זה נועד לעזור לכם ליצירת טורניר חדש.',
+                    side: "top", align: 'center',
                 },
             },
             {
-              element: '.select-teams-tournament',
-              popover: {
-                title: 'בחירת קבוצות',
-                description: 'בבחירת הקבוצות צריך לבחור שני משתמשים שהתחרו אחת נגד השניה שים לב שלאחר בחירת משתמשים אלו לא יהיה נתן לבחור בהם שוב באותו השלב.',
-                side: "top", align: 'center',
-              },
+                element: '.checkbox-container',
+                popover: {
+                    title: 'הוספת שלב בתים',
+                    description: 'אם תבחר באופציה זאת יתווסף שלב בתים ותיהיה חייב להוסיף משתמשים לבתים.',
+                    side: "bottom", align: 'center',
+                },
             },
-            {
-              element: '.result-game-team-1',
-              popover: {
-                title: 'בחירת תוצאת משחק',
-                description: 'בבחירת תוצאות משחק אתה צריך למלא את מספר הגולים באותו משחק שים לב שכאשר אתה ממלא את מספר הגולים לקבוצה בחרת בשדה הנכון ובקובצה הנכונה.',
-                side: "top", align: 'center',
+            !isGroupStage ? {
+                element: '.select-tournament-type',
+                popover: {
+                  title: 'סוג טורניר',
+                  description: 'בבחירה הזאת ניתן לבחור 3 סוגים של טורנרים כאלה שמתחילים משמינית גמר, רבע גמר או חצי גמר.',
+                  side: "bottom", align: 'center',
+                },
+            } : null,
+            isGroupStage ? {
+                element: '.group-selection-container',
+                popover: {
+                  title: 'בחירת מספר בתים',
+                  description: 'בבחירה הזאת תצטרך לבחור את מספר הבתים בטורניר שים לב שבחירת הבתים משפיעה על שלב הטורניר.',
+                  side: "bottom", align: 'center',
+                },
+            } : null,
+              {
+                element: '.btn-add-image',
+                popover: {
+                  title: 'הוספת תמונה',
+                  description: 'בלחיצה על כפתור הוספת תמונה תוכל להוסיף תמונה או מספר תמונות באמצעות קישור אינטרנטי לאותה תמונה (הוספת תמונה אינה חובה).',
+                  side: "top", align: 'center',
+                },
               },
-            },
-            {
-              element: '.select-tournament-level',
-              popover: {
-                title: 'בחירת שלב משחק',
-                description: 'בבחירת שלב משחק שים לב שאתה מוסיף את המשחק לשלב הנכון (דוגמה: לאחר שמלאת את שלב חצי גמר במשחקים תצטרך לעבור לשלב גמר).',
-                side: "top", align: 'center',
+              {
+                element: '.search-bar-container',
+                popover: {
+                  title: 'הוספת משתמשים',
+                  description: 'בשורה זאת ניתן להוסיף משתמשים לטורניר שים לב שאתה חייב להוסיף לפחות משתמש אחד לטורניר.',
+                  side: "top", align: 'center',
+                },
               },
-            },
+              {
+                element: '.the-first-place',
+                popover: {
+                  title: 'מקום ראשון',
+                  description: 'מקום ראשון הוא המשתמש שזכה בטורניר ושניצח את כולם. שים לב ששדה זה מתמלא אוטמטית לאחר בחירת המשחקים גם את מקום שני ומלך השערים. רק מלך הבישולים צרך למלא ידנית אך לא חובה.',
+                  side: "top", align: 'center',
+                },
+              },
+              isGroupStage && numberOfGroups ? {
+                element: '.group-card',
+                popover: {
+                    title: 'שלב הבתים',
+                    description: `שים לב שאתה חייב להוסיף בדיוק 4 שחקנים לבית ולהוסיף את הנקודות בבית לכל שחקן חובה שיהיה בכל בית 36 נקודות.`,
+                    side: "top", align: 'center',
+                  },
+            } : null,
+              {
+                  element: '.add-games-tournament',
+                  popover: {
+                      title: 'הוספת משחק לטורניר',
+                      description: `בהוספת משחק לטורניר צריך לבחור את כל המשחקים שהתרחשו בטורניר עצמו שים לב:\n <p class='text-red'>בחצי גמר</p> חובה להוסיף בדיוק 2 משחקים.\n<p class='text-red'>ברבע גמר</p> חובה להוסיף בדיוק 4 משחקים.\n <p class='text-red'>ובשמינית גמר</p> חובה להוסיף בדיוק 8 משחקים.`,
+                      side: "top", align: 'center',
+                    },
+                },
+                {
+                  element: '.select-teams-tournament',
+                  popover: {
+                    title: 'בחירת קבוצות',
+                    description: 'בבחירת הקבוצות צריך לבחור שני משתמשים שהתחרו אחת נגד השניה שים לב שלאחר בחירת משתמשים אלו לא יהיה נתן לבחור בהם שוב באותו השלב.',
+                    side: "top", align: 'center',
+                  },
+                },
+                {
+                  element: '.result-game-team-1',
+                  popover: {
+                    title: 'בחירת תוצאת משחק',
+                    description: 'בבחירת תוצאות משחק אתה צריך למלא את מספר הגולים באותו משחק שים לב שכאשר אתה ממלא את מספר הגולים לקבוצה בחרת בשדה הנכון ובקובצה הנכונה.',
+                    side: "top", align: 'center',
+                  },
+                },
+                {
+                  element: '.select-tournament-level',
+                  popover: {
+                    title: 'בחירת שלב משחק',
+                    description: 'בבחירת שלב משחק שים לב שאתה מוסיף את המשחק לשלב הנכון (דוגמה: לאחר שמלאת את שלב חצי גמר במשחקים תצטרך לעבור לשלב גמר).',
+                    side: "top", align: 'center',
+                  },
+                },
         ].filter(step => step !== null); // סינון שלבים ריקים או לא רלוונטיים
       
         const driverObj = driver({
@@ -126,7 +158,29 @@ const CreateTournamentV2 = () => {
         driverObj.drive();
       };
 
-
+      const handleGroupStageToggle = () => {
+        setIsGroupStage(!isGroupStage);
+        if (!isGroupStage) {
+          setNumberOfGroups(null);
+          setTournamentType("חצי גמר");
+          setGroups([]);
+        }
+      };
+    
+      const handleGroupSelection = (groups) => {
+        setNumberOfGroups(groups);
+    
+        if (groups === 4) setTournamentType("חצי גמר");
+        else if (groups === 8) setTournamentType("רבע גמר");
+        else if (groups === 16) setTournamentType("שמינית גמר");
+    
+        // יצירת הבתים
+        const newGroups = [];
+        for (let i = 1; i <= groups; i++) {
+          newGroups.push({ id: i, teams: [] });
+        }
+        setGroups(newGroups);
+      };
         // הוספת שדה URL חדש לתמונות
         const addImageInput = () => {
             setImages([...images, '']);
@@ -177,7 +231,6 @@ const CreateTournamentV2 = () => {
     
         return hasDuplicates;
     };
-    
 
     useEffect(() => {
         if (tournamentData.length === 0) return;
@@ -277,7 +330,7 @@ const CreateTournamentV2 = () => {
     // הצג בלוג רק אם הקבוצה אינה "שחקן מדומה"
     if (topScoringUser && !topScoringTeam.includes('שחקן מדומה')) {
         setKOGMaxGoals(maxGoals);
-        setKOG(topScoringUser);
+        setKOG(topScoringUser._id);
     } else {
         setKOGMaxGoals('');
         setKOG('');
@@ -290,7 +343,7 @@ const CreateTournamentV2 = () => {
     
     
     const updateDummyPlayers = useCallback(() => {
-        const requiredPlayers = getRequiredPlayers(tournamentType);
+        const requiredPlayers = getRequiredPlayers(tournamentType, isGroupStage);
         if (users.length < requiredPlayers) {
             const missingPlayers = requiredPlayers - users.length;
             const newDummyPlayers = createDummyPlayers(missingPlayers);
@@ -298,18 +351,28 @@ const CreateTournamentV2 = () => {
         } else {
             setDummyPlayers([]);
         }
-    }, [tournamentType, users]);
+    }, [tournamentType, users, isGroupStage]);
 
     useEffect(() => {
         updateDummyPlayers();
     }, [tournamentType, users, tournamentData, updateDummyPlayers]);
 
-    const getRequiredPlayers = (type) => {
-        switch (type) {
-            case 'רבע גמר': return 8;
-            case 'חצי גמר': return 4;
-            case 'שמינית גמר': return 16;
-            default: return 0;
+    const getRequiredPlayers = (type, stage) => {
+        if(stage) {
+            switch (type) {
+                case 'חצי גמר': return 16;
+                case 'רבע גמר': return 32;
+                case 'שמינית גמר': return 64;
+                default: return 0;
+            }
+        } else {
+            switch (type) {
+                case 'חצי גמר': return 4;
+                case 'רבע גמר': return 8;
+                case 'שמינית גמר': return 16;
+                default: return 0;
+            }
+            
         }
     };
 
@@ -342,7 +405,7 @@ const CreateTournamentV2 = () => {
             return;
         }
 
-        if (!title || !firstPlace || !secondPlace || !KOG || !tournamentDate) {
+        if (!title || !firstPlace || !secondPlace || !KOG || !KOA || !tournamentDate) {
             addToast({ id: Date.now(), message: 'יש למלא את כל השדות', type: 'error' });
             setError('יש למלא את כל השדות');
             setIsLoading(false);
@@ -362,15 +425,27 @@ const CreateTournamentV2 = () => {
             return;
         }
 
+        const koaPlayer = users.find(user => user._id === KOA);
+        const kogPlayer = users.find(user => user._id === KOG);
+    
+        let playerAssists = [];
+    
+        if (koaPlayer && numAssists) {
+            playerAssists = [{ name: `${koaPlayer.firstName} ${koaPlayer.lastName}`, assists: numAssists }];
+        }
+
         try {
             const token = localStorage.getItem('token');
             const response = await axios.post(`/leagues/${LeaguesSlug}`, {
                 tournamentData,
+                groups,
                 title,
                 firstPlace: firstPlace._id,
                 secondPlace: secondPlace._id,
-                KOG: KOG._id,
+                KOG: kogPlayer,
+                KOA: KOA,
                 playerGoals: allPlayerGoals,
+                playerAssists,
                 images: images.filter(Boolean),
                 users,
                 createdAt: tournamentDate,
@@ -410,6 +485,47 @@ const CreateTournamentV2 = () => {
                     <h2>צור טורניר חדש</h2>
                     {error && <p className="error-message">{error}</p>}
                     <form onSubmit={handleSubmit}>
+                    <div className="checkbox-container">
+                        <label className="checkbox-label">
+                            <input
+                            type="checkbox"
+                            checked={isGroupStage}
+                            onChange={handleGroupStageToggle}
+                            className="styled-checkbox"
+                            />
+                            <span className="custom-checkbox"></span>
+                            שלב בתים
+                        </label>
+                    </div>
+
+
+                    {isGroupStage ? (
+                        <div className="group-selection-container">
+                            <label className="group-selection-label">
+                                בחר מספר בתים:
+                                <select
+                                value={numberOfGroups || ""}
+                                onChange={(e) => handleGroupSelection(parseInt(e.target.value))}
+                                className="group-selection-dropdown"
+                                >
+                                <option value="" disabled>
+                                    בחר
+                                </option>
+                                <option value={4}>4 בתים</option>
+                                <option value={8}>8 בתים</option>
+                                <option value={16}>16 בתים</option>
+                                </select>
+                            </label>
+
+                            {tournamentType && (
+                                <p className="tournament-type">
+                                שלב אוטומטי: {tournamentType}
+                                </p>
+                            )}
+                        </div>
+
+                    ): (
+                        <>
                         <label>סוג טורניר:</label>
                         <select
                             className='input-create-tournament select-tournament-type'
@@ -420,6 +536,8 @@ const CreateTournamentV2 = () => {
                             <option value='רבע גמר'>רבע גמר</option>
                             <option defaultValue value='חצי גמר'>חצי גמר</option>
                         </select>
+                        </>
+                    )}
                         <label>כותרת הטורניר:</label>
                         <input
                             className='input-create-tournament'
@@ -482,19 +600,104 @@ const CreateTournamentV2 = () => {
                             <p className="tournament-runner-up">טרם נקבע</p>
                         )}
                         <label>מלך השערים:</label>
-                        {KOG && KOGMaxGoals ? (
-                            <p className="tournament-runner-up">
-                                {KOG.firstName} {KOG.lastName} - {KOGMaxGoals} שערים
-                            </p>
+                        {KOG && KOGMaxGoals && !editKOG ? (
+                            (() => {
+                                const KOGUser = users.find((user) => user._id === KOG);
+                                return KOGUser ? (
+                                    <p className="tournament-runner-up">
+                                        {KOGUser.firstName} {KOGUser.lastName} - {KOGMaxGoals} שערים
+                                        <button
+                                            className="edit-button"
+                                            onClick={() => setEditKOG(true)}
+                                        >
+                                            ערוך
+                                        </button>
+                                    </p>
+                                ) : (
+                                    <p className="tournament-runner-up">משתמש לא נמצא</p>
+                                );
+                            })()
+                        ) : editKOG ? (
+                            <></>
                         ) : (
                             <p className="tournament-runner-up">טרם נקבע</p>
                         )}
+                        {
+                            editKOG ? (
+                                <div className='tournament-runner-up'>
+                                    <select
+                                        className='input-create-tournament'
+                                        value={KOG}
+                                        onChange={(e) => setKOG(e.target.value)}
+                                    >
+                                        <option value="">בחר מלך שערים</option>
+                                        {allPlayers.map((user) => (
+                                            <option key={user._id} value={user._id}>
+                                                {user.firstName} {user.lastName} - {user.email}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <button
+                                    className="edit-button"
+                                    onClick={() => setEditKOG(false)}
+                                    >
+                                        ערוך
+                                    </button>
+                                </div>
+                            
+                            ) : (
+                                <>
+                                </>
+                            )
+                        }
+                        <label>מלך הבישולים:</label>
+                        <select
+                            className='input-create-tournament'
+                            value={KOA}
+                            onChange={(e) => setKOA(e.target.value)}
+                        >
+                            <option value="">בחר מלך בישולים</option>
+                            {allPlayers.map((user) => (
+                                <option key={user._id} value={user._id}>
+                                    {user.firstName} {user.lastName} - {user.email}
+                                </option>
+                            ))}
+                        </select>
+                        {
+                                KOA ? (
+                                    <>
+                                        <label>כמות בישולים:</label>
+                                        <input
+                                            className='input-create-tournament'
+                                            type="number"
+                                            value={numAssists}
+                                            onChange={(e) => setNumAssists(e.target.value)}
+                                            placeholder="כמות בישולים"
+                                            required
+                                        />
+                                    </>
+                                ) : (
+                                    <>
+                                    </>
+                                )
+                        }
 
                         <button type="submit" className="btn-create-tournament last-btn">צור משחק</button>
                     </form>
                 </div>
-                <div className='tournament-bracket'>
-                    <OddKnockoutBracket users={allPlayers} KnockoutType={tournamentType} tournamentData={tournamentData} setTournamentData={setTournamentData}/>
+                <div>
+                    {isGroupStage ? (
+                        <div style={{width: "100vw"}}>
+                            <GroupStage groups={groups} setGroups={setGroups} users={allPlayers} winners={groupWinners} setWinners={setGroupWinners} />
+                            <div className='tournament-bracket'>
+                                <OddKnockoutBracket users={groupWinners} KnockoutType={tournamentType} tournamentData={tournamentData} setTournamentData={setTournamentData}/>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className='tournament-bracket'>
+                            <OddKnockoutBracket users={allPlayers} KnockoutType={tournamentType} tournamentData={tournamentData} setTournamentData={setTournamentData}/>
+                        </div>
+                    )}
                 </div>
             </div>
             <Footer />
