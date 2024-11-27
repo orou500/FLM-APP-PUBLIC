@@ -442,7 +442,7 @@ const CreateTournamentV2 = () => {
                 title,
                 firstPlace: firstPlace._id,
                 secondPlace: secondPlace._id,
-                KOG: kogPlayer,
+                KOG: kogPlayer._id,
                 KOA: KOA,
                 playerGoals: allPlayerGoals,
                 playerAssists,

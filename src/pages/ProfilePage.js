@@ -70,7 +70,7 @@ const ProfilePage = () => {
                                     <AnimatedCounter className="profile-stats-box-value" value={auth.KOG.length} includeDecimals={false}/>
                                 </div>
                                 <div className='profile-stats-box'>
-                                    <GiRunningShoe className='icon koa'/><p><strong>מלך השערים:</strong></p>
+                                    <GiRunningShoe className='icon koa'/><p><strong>מלך הבישולים:</strong></p>
                                     <AnimatedCounter className="profile-stats-box-value" value={auth.KOA.length} includeDecimals={false}/>
                                 </div>
                             </div>
